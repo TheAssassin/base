@@ -1,0 +1,5 @@
+_python_server_plugin.cpp
+*.so
+
+__pycache__/
+*.py[c,o]
