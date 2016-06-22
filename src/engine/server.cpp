@@ -2,6 +2,7 @@
 // runs dedicated or as client coroutine
 
 #include "engine.h"
+#include "python_server_plugin.h"
 #include <signal.h>
 #ifdef WIN32
 #include <shlobj.h>
@@ -1835,6 +1836,9 @@ int main(int argc, char **argv)
     signal(SIGSTOP, fatalsignal);
 #endif
     enet_time_set(0);
+
+    pysrvInit();
+
     initgame();
     trytofindocta();
     if(initscript) execute(initscript);

@@ -90,12 +90,16 @@ add_subdirectory(enet)
 
 # configure local includes
 include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine
-        ${CMAKE_CURRENT_SOURCE_DIR}/game
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/shared
-        ${ENET_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/engine
+    ${CMAKE_CURRENT_SOURCE_DIR}/game
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared
+    ${CMAKE_CURRENT_SOURCE_DIR}/enet/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/python
 )
+
+# configure python plugins
+add_subdirectory(python)
 
 # add the client executable and link it to enet
 add_executable(redeclipse_client${BIN_SUFFIX} ${client_sources})
@@ -104,10 +108,8 @@ target_link_libraries(redeclipse_client${BIN_SUFFIX} enet)
 # add the server executable and link it to enet
 # (define STANDALONE to "notify" the preprocessor that the server is built this time)
 add_executable(redeclipse_server${BIN_SUFFIX} ${server_sources})
-target_link_libraries(redeclipse_server${BIN_SUFFIX} enet)
-set_target_properties(redeclipse_server${BIN_SUFFIX} PROPERTIES
-        COMPILE_FLAGS "-DSTANDALONE"
-        )
+target_link_libraries(redeclipse_server${BIN_SUFFIX} enet python_server_plugin)
+set_target_properties(redeclipse_server${BIN_SUFFIX} PROPERTIES COMPILE_FLAGS "-DSTANDALONE")
 
 if(APPLE)
     # include framework required in xcode/ code
