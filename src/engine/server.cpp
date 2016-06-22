@@ -2,7 +2,6 @@
 // runs dedicated or as client coroutine
 
 #include "engine.h"
-#include "python_server_plugin.h"
 #include <signal.h>
 #ifdef WIN32
 #include <shlobj.h>

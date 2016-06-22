@@ -74,6 +74,7 @@
 
 #include "iengine.h"
 #include "igame.h"
+#include "python_server_plugin.h"
 
 #endif
 
