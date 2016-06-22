@@ -30,7 +30,7 @@ with open("_re_api.cpp") as f:
 # tell CFFI what methods are publicly availabe for the shared library that is
 # built his allows it to match those functions and the Python functions
 # defined using @ffi.def_extern()
-with open("python_server_plugin.h") as f:
+with open("_python_server_plugin.h") as f:
     ffibuilder.embedding_api(f.read())
 
 
