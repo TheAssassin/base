@@ -1837,6 +1837,7 @@ int main(int argc, char **argv)
 #endif
     enet_time_set(0);
 
+    // initialize Python server plugin
     pysrvInit();
 
     initgame();
