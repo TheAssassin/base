@@ -24,6 +24,13 @@ foreach(dep IN LISTS plugin_deps)
     endforeach(lib_dir)
 endforeach(dep)
 
+# very bad hack around the problem that _python_server_plugin.cpp is not regenerated
+# if the files it depends on are modified
+add_custom_command(
+    OUTPUT ${PROJECT_SOURCE_DIR}/_remove_python_server_plugin.cpp
+    COMMAND rm ${PROJECT_SOURCE_DIR}/_python_server_plugin.cpp || true
+)
+
 include_directories(
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/../enet/include
@@ -33,14 +40,17 @@ add_custom_command(
     OUTPUT ${PROJECT_SOURCE_DIR}/_python_server_plugin.cpp
     COMMAND python3 generate_server_plugin.py
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    DEPENDS
-    ${PROJECT_SOURCE_DIR}/generate_server_plugin.py
-    ${PROJECT_SOURCE_DIR}/_re_api.cpp
-    ${PROJECT_SOURCE_DIR}/_re_api.h
+    DEPENDS ${PROJECT_SOURCE_DIR}/_remove_python_server_plugin.cpp
 )
 
 add_library(
     python_server_plugin
     SHARED
     ${PROJECT_SOURCE_DIR}/_python_server_plugin.cpp
+)
+
+set_target_properties(
+    python_server_plugin
+    PROPERTIES
+    PREFIX ""
 )
