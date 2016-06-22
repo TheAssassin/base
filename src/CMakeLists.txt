@@ -38,8 +38,8 @@ list(REMOVE_ITEM server_sources ${genkey_cpp_path})
 # make sure sqlite3 is built with the correct flags
 file(GLOB sqlite3_cpp_path support/sqlite3.c)
 set_source_files_properties(support/sqlite3.c PROPERTIES
-        COMPILE_FLAGS "-DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION"
-        )
+    COMPILE_FLAGS "-DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_LOAD_EXTENSION"
+)
 
 # platform specific code
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
