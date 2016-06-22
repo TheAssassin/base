@@ -7,4 +7,13 @@
  * Python function.
  */
 
+typedef char string[512];
+
 void pysrvInit();
+
+void pysrvRunConnectHooks(
+    int clientnum,
+    string name,
+    string handle,
+    int privilege
+);

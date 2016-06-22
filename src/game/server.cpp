@@ -5685,6 +5685,8 @@ namespace server
             ci->ready = true;
             aiman::poke();
         }
+
+        pysrvRunConnectHooks(ci->clientnum, ci->name, ci->handle, ci->privilege);
     }
 
     void parsepacket(int sender, int chan, packetbuf &p)     // has to parse exactly each byte of the packet
