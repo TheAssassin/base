@@ -1325,6 +1325,9 @@ void serverloop()
         checkmaster();
         serverslice(5);
         ircslice();
+
+        // Python server plugin: run current event loop callbacks
+        pysrvRunEventLoopOnce();
 #ifdef WIN32
         MSG msg;
         while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -1843,6 +1846,10 @@ int main(int argc, char **argv)
     trytofindocta();
     if(initscript) execute(initscript);
     serverloop();
+
+    // shutdown Python server plugin
+    pysrvShutdown();
+
     cleanupserver();
     return 0;
 }

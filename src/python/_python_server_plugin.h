@@ -17,3 +17,7 @@ void pysrvRunConnectHooks(
     string handle,
     int privilege
 );
+
+void pysrvShutdown();
+
+void pysrvRunEventLoopOnce();
