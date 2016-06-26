@@ -10,3 +10,7 @@
 void pysrvConoutf(char message[]) {
     conoutf("%s", message);
 }
+
+int pysrvGetServerPort() {
+    return serverport;
+}

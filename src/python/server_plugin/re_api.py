@@ -27,3 +27,17 @@ def log_server_console(msg, prefix="[Python] "):
         prefix = prefix.encode()
 
     _lib.pysrvConoutf(prefix + msg)
+
+
+def get_server_port():
+    """
+    Returns the main server port.
+
+    You can calculate the server info port by adding 1 to the integer
+    returned by this function.
+
+    :return: main server port
+    :rtype: int
+    """
+
+    return _lib.pysrvGetServerPort()

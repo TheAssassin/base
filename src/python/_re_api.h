@@ -10,3 +10,5 @@
  */
 
 void pysrvConoutf(char message[]);
+
+int pysrvGetServerPort();
