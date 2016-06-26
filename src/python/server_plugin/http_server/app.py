@@ -1,6 +1,7 @@
 from aiohttp import web
 from asyncio import coroutine
-from ..re_api import log_server_console as log, get_server_port
+from ..re_api import log_server_console as log, get_server_port, \
+    shutdown_server
 
 
 class HttpServer:
@@ -47,3 +48,11 @@ class HttpServer:
 @coroutine
 def handle_request(request):
     return web.Response(body=b"woo")
+
+
+@HttpServer.route("/shutdown")
+@coroutine
+def handle_shutdown_server(request):
+    shutdown_server()
+    return web.Response(body=b"shutting down...")
+

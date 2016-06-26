@@ -12,3 +12,5 @@
 void reConoutf(char message[]);
 
 int reGetServerPort();
+
+void reShutdownServer();

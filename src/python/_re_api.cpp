@@ -6,6 +6,7 @@
  */
 
 #include "cube.h"
+#include "engine.h"
 
 void reConoutf(char message[]) {
     conoutf("%s", message);
@@ -13,4 +14,8 @@ void reConoutf(char message[]) {
 
 int reGetServerPort() {
     return serverport;
+}
+
+void reShutdownServer() {
+    shutdownsignal(SIGINT);
 }

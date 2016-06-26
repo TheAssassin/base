@@ -41,3 +41,7 @@ def get_server_port():
     """
 
     return _lib.reGetServerPort()
+
+
+def shutdown_server():
+    return _lib.reShutdownServer()
