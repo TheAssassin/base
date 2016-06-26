@@ -26,7 +26,7 @@ def log_server_console(msg, prefix="[Python] "):
     if hasattr(prefix, "encode"):
         prefix = prefix.encode()
 
-    _lib.pysrvConoutf(prefix + msg)
+    _lib.reConoutf(prefix + msg)
 
 
 def get_server_port():
@@ -40,4 +40,4 @@ def get_server_port():
     :rtype: int
     """
 
-    return _lib.pysrvGetServerPort()
+    return _lib.reGetServerPort()

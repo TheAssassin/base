@@ -7,10 +7,10 @@
 
 #include "cube.h"
 
-void pysrvConoutf(char message[]) {
+void reConoutf(char message[]) {
     conoutf("%s", message);
 }
 
-int pysrvGetServerPort() {
+int reGetServerPort() {
     return serverport;
 }

@@ -9,6 +9,6 @@
  * copied from these headers or in some cases from the libraries' man pages.
  */
 
-void pysrvConoutf(char message[]);
+void reConoutf(char message[]);
 
-int pysrvGetServerPort();
+int reGetServerPort();
