@@ -47,3 +47,5 @@ src/redeclipse.cscope_file_list
 .idea/
 Debug/
 Release/
+venv/
+virtualenv/
