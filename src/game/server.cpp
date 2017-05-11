@@ -1529,7 +1529,7 @@ namespace server
 
     bool checkvotes(bool force = false);
     void sendstats(bool fromintermission = false);
-    void startintermission(bool req = false)
+    void startintermission(bool votingenabled = false)
     {
         if(gs_playing(gamestate))
         {
@@ -1540,7 +1540,7 @@ namespace server
             if(smode) smode->intermission();
             mutate(smuts, mut->intermission());
         }
-        if(req || !G(intermlimit))
+        if(votingenabled || !G(intermlimit))
         {
             checkdemorecord(true);
             if(gamestate != G_S_VOTING && G(votelimit))
@@ -3417,6 +3417,16 @@ namespace server
     #include "duelmut.h"
     #include "aiman.h"
 
+    void sendpausedmsg(int cn = -1, int msgtype = 0) {
+        static const string msg0 = "\fzogMatch begin has been locked by a moderator! Please be patient until the game is unlocked!\fS";
+        static const string msg1 = "\fzogMatch begin has been locked automatically! Please be patient until the game is unlocked by a moderator!\fS";
+
+        ancmsgft(cn, S_V_BALALERT, CON_SELF, msgtype <= 0 ? msg0 : msg1);
+    }
+
+    // -1: map has changed (default value) -- 0: gamebeginpaused has been set to 1 -- 1: gamebeginpaused has been set to 0
+    static int gamebegincontinued = -1;
+
     void changemap(const char *name, int mode, int muts)
     {
         hasgameinfo = shouldcheckvotes = firstblood = sentstats = false;
@@ -3473,6 +3483,14 @@ namespace server
         {
             clients[i]->mapchange(true);
             spectator(clients[i]);
+        }
+
+        if(G(gamebeginpausedauto))
+        {
+            setvar("sv_gamebeginpaused", 1);
+            sendf(-1, 1, "ri2sis", N_COMMAND, -1, "gamebeginpaused", 1, "1");
+            gamebegincontinued = -1;
+            sendpausedmsg(-1, 1);
         }
 
         if(!demoplayback && m_play(gamemode) && numclients())
@@ -5057,6 +5075,8 @@ namespace server
         }
     }
 
+    static bool votingdisabledmessagesent = false;
+
     void serverupdate()
     {
         loopvrev(connects) if(totalmillis-connects[i]->connectmillis >= G(connecttimeout))
@@ -5141,6 +5161,21 @@ namespace server
                 {
                     case G_S_WAITING: // start check
                     {
+                        if(G(gamebeginpaused))
+                        {
+                            gamebegincontinued = 0;
+                            break;
+                        }
+                        else
+                        {
+                            if(gamebegincontinued == 0)
+                            {
+                                ancmsgft(-1, S_V_NOTIFY, CON_SELF, "\fzryGet ready, game has been continued!");
+                                gamebegincontinued = 1;
+                                gamewaittime = totalmillis + G(gamebeginpausedtime);
+                            }
+                        }
+
                         if(!G(waitforplayermaps))
                         {
                             gamewaittime = totalmillis+G(waitforplayertime);
@@ -5208,12 +5243,22 @@ namespace server
                     }
                     case G_S_READYING: // waiting for ready
                     {
+                        if(G(gamebeginpaused))
+                        {
+                            gamebegincontinued = 0;
+                            gamewaittime = totalmillis;
+                            gamestate = G_S_WAITING;
+                            sendpausedmsg(-1);
+                            sendtick();
+                            break;
+                        }
+
                         if(!gamewaittime)
                         {
                             gamewaittime = totalmillis+G(waitforplayertime);
                             sendtick();
                         }
-                        if(numwait && gamewaittime > totalmillis) break;
+                        if((numwait || gamebegincontinued == 1) && gamewaittime > totalmillis) break;
                         if(!hasgameinfo)
                         {
                             clientinfo *best = NULL;
@@ -5295,8 +5340,25 @@ namespace server
                 if(smode) smode->update();
                 mutate(smuts, mut->update());
             }
-            if(gs_intermission(gamestate) && gamewaittime <= totalmillis) startintermission(true); // wait then call for next map
-            if(shouldcheckvotes) checkvotes();
+
+            if(G(votingenabled))
+            {
+                if(gs_intermission(gamestate) && gamewaittime <= totalmillis)
+                {
+                    startintermission(true);
+                } // wait then call for next map
+                else if(shouldcheckvotes) checkvotes();
+            }
+            else
+            {
+                if(gamestate == G_S_INTERMISSION && !votingdisabledmessagesent)
+                {
+                    votingdisabledmessagesent = true;
+                    ancmsgft(-3, S_V_BALALERT, CON_SELF, "\fzyoPublic voting has been disabled! Please wait for an administrator to force the next game!");
+                    startintermission();
+                    gamewaittime = totalmillis;
+                }
+            }
         }
         else
         {
@@ -5723,6 +5785,8 @@ namespace server
             else relayf(2, "\fg%s has joined the game (\fs\fy%s\fS) [%d.%d.%d-%s%d-%s] (%d %s)", colourname(ci), privname(ci->privilege), ci->version.major, ci->version.minor, ci->version.patch, plat_name(ci->version.platform), ci->version.arch, ci->version.branch, amt, amt != 1 ? "players" : "player");
         }
         else relayf(2, "\fg%s has joined the game [%d.%d.%d-%s%d-%s] (%d %s)", colourname(ci), ci->version.major, ci->version.minor, ci->version.patch, plat_name(ci->version.platform), ci->version.arch, ci->version.branch, amt, amt != 1 ? "players" : "player");
+
+        if(G(gamebeginpaused)) sendpausedmsg(ci->clientnum, G(gamebeginpausedauto) > 0 ? 1 : 0);
 
         if(m_demo(gamemode)) setupdemoplayback();
         else if(m_edit(gamemode))

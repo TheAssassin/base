@@ -169,6 +169,11 @@ GVAR(IDF_MODERATOR, waitforplayerload, 0, 20000, VAR_MAX); // wait this long for
 GVAR(IDF_MODERATOR, waitforplayermaps, 0, 30000, VAR_MAX); // wait this long for sendmap and getmap requests
 GVAR(IDF_MODERATOR, waitforplayerinfo, 0, 10000, VAR_MAX); // wait at least this long for players to send info
 
+GVAR(IDF_MODERATOR, gamebeginpaused, 0, 0, 1); //
+GVAR(IDF_MODERATOR, gamebeginpausedauto, 0, 0, 1);
+GVAR(IDF_MODERATOR, gamebeginpausedtime, 0, 10000, 60000); //
+GVAR(IDF_MODERATOR, votingenabled, 0, 1, 1); // enable or disable public voting after the intermission has ended: 0 = waiting for map to be forced, 1 = allow public voting
+
 namespace server
 {
     extern void resetgamevars(bool all);
